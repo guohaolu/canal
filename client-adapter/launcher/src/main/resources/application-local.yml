@@ -57,7 +57,7 @@ canal.conf:
     - groupId: g1
       outerAdapters:
       - name: logger
-      - name: clickhouse
+      - name: ewayt-clickhouse
         key: example-routingkey
         properties:
           jdbc.driverClassName: ru.yandex.clickhouse.ClickHouseDriver # com.clickhouse.jdbc.ClickHouseDriver

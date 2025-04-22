@@ -6,7 +6,7 @@ concurrent: true
 dbMapping:
   database: ewayt_bi
   table: ods_sale_msku_monitor
-  targetTable: ewayt_bi.ods_sale_msku_monitor_t
+  targetTable: ewayt_bi.ods_sale_msku_monitor_t_2
   targetPk:
     id: id
   mapAll: true

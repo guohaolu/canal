@@ -108,7 +108,7 @@ public class ClickHouseAdapter implements OuterAdapter {
         try {
             dataSource.init();
         } catch (SQLException e) {
-            logger.error("ERROR ## failed to initial datasource: " + properties.get("jdbc.url"), e);
+            logger.error("ERROR ## failed to initial datasource: {}", properties.get("jdbc.url"), e);
         }
 
         String threads = properties.get("threads");

@@ -1,0 +1,74 @@
+dataSourceKey: defaultDS
+destination: business.queue.bi.clickhouse
+groupId: g1
+outerAdapterKey: example-routingkey
+concurrent: true
+dbMapping:
+  database: ewayt_purchase
+  table: purchase_order
+  targetTable: ewayt_report.ods_sale_msku_monitor
+  targetPk:
+    id: id
+  mapAll: true
+  targetColumns:
+    id: id
+    platform_id: platform_id
+    team_id: team_id
+    team_code: team_code
+    team_name: team_name
+    store_id: store_id
+    store_code: store_code
+    store_name: store_name
+    market_id: market_id
+    market_code: market_code
+    market_name: market_name
+    store_and_market: store_and_market
+    msku_code: msku_code
+    title: title
+    asin: asin
+    parent_asin: parent_asin
+    sale_duty_uid: sale_duty_uid
+    sale_duty_uid_name: sale_duty_uid_name
+    pic_url: pic_url
+    category_id: category_id
+    category_name: category_name
+    sku_id: sku_id
+    sku_code: sku_code
+    sku_name: sku_name
+    sku_type: sku_type
+    currency: currency
+    order_num: order_num
+    sales: sales
+    sales_revenue: sales_revenue
+    other_income: other_income
+    return_sale_revenue: return_sale_revenue
+    tax_fee: tax_fee
+    platform_fee: platform_fee
+    sale_commission: sale_commission
+    advertising_expenses: advertising_expenses
+    storage_fee: storage_fee
+    delivery_fee: delivery_fee
+    promotion_fee: promotion_fee
+    other_outcome: other_outcome
+    fee_refund: fee_refund
+    sale_tax_fee: sale_tax_fee
+    refund_tax_fee: refund_tax_fee
+    product_cost: product_cost
+    purchase_cost: purchase_cost
+    arrive_inventory_cost: arrive_inventory_cost
+    outcome: outcome
+    gross_profit: gross_profit
+    product_platform_online_time: product_platform_online_time
+    hour_timestamp: hour_timestamp
+    hour_time: hour_time
+    date_timestamp: date_timestamp
+    date_time: date_time
+    month_date: month_date
+    del_flag: del_flag
+    create_by: create_by
+    update_by: update_by
+    create_time: create_time
+    update_time: update_time
+    tenant_id: tenant_id
+  etlCondition: "where c_time>={}"
+  commitBatch: 3000 # 批量提交的大小

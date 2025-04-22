@@ -37,6 +37,7 @@
         <module>phoenix</module>
         <module>tablestore</module>
         <module>clickhouse</module>
+        <module>ewayt-clickhouse</module>
     </modules>
 
     <licenses>

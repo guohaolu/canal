@@ -67,6 +67,12 @@
 		<appender-ref ref="STDOUT"/>
 		<appender-ref ref="CANAL-ROOT" />
 	</logger>
+	<!-- 新增 ewayt Clickhouse -->
+	<logger name="com.alibaba.otter.canal.client.adapter.ewayt.clickhouse" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="CANAL-ROOT" />
+	</logger>
 	<logger name="com.alibaba.otter.canal.client.adapter.rdb" additivity="false">
 		<level value="DEBUG" />
 		<appender-ref ref="STDOUT"/>

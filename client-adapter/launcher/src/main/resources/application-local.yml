@@ -1,0 +1,69 @@
+server:
+  port: 8081
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+
+canal.conf:
+  mode: rabbitMQ #tcp kafka rocketMQ rabbitMQ
+  flatMessage: true
+  zookeeperHosts:
+  syncBatchSize: 1000
+  retries: -1
+  timeout:
+  accessKey:
+  secretKey:
+  consumerProperties:
+    # canal tcp consumer
+    canal.tcp.server.host: 127.0.0.1:11111
+    canal.tcp.zookeeper.hosts:
+    canal.tcp.batch.size: 500
+    canal.tcp.username:
+    canal.tcp.password:
+    # kafka consumer
+    kafka.bootstrap.servers: 127.0.0.1:9092
+    kafka.enable.auto.commit: false
+    kafka.auto.commit.interval.ms: 1000
+    kafka.auto.offset.reset: latest
+    kafka.request.timeout.ms: 40000
+    kafka.session.timeout.ms: 30000
+    kafka.isolation.level: read_committed
+    kafka.max.poll.records: 1000
+    # rocketMQ consumer
+    rocketmq.namespace:
+    rocketmq.namesrv.addr: 127.0.0.1:9876
+    rocketmq.batch.size: 1000
+    rocketmq.enable.message.trace: false
+    rocketmq.customized.trace.topic:
+    rocketmq.access.channel:
+    rocketmq.subscribe.filter:
+    # rabbitMQ consumer
+    rabbitmq.host: 172.18.11.215
+    rabbitmq.virtual.host: /
+    rabbitmq.username: canal
+    rabbitmq.password: canal
+    rabbitmq.resource.ownerId:
+
+  srcDataSources:
+    defaultDS:
+      url: jdbc:mysql://172.18.11.215:3306/ewayt_report?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&allowMultiQueries=true&allowPublicKeyRetrieval=true
+      username: canal
+      password: canal
+  canalAdapters:
+  - instance: business.queue.bi.clickhouse # canal instance Name or mq topic name
+    groups:
+    - groupId: g1
+      outerAdapters:
+      - name: logger
+      - name: clickhouse
+        key: example-routingkey
+        properties:
+          jdbc.driverClassName: ru.yandex.clickhouse.ClickHouseDriver # com.clickhouse.jdbc.ClickHouseDriver
+          jdbc.url: jdbc:clickhouse://172.16.13.244:8123/ewayt_report
+          jdbc.username: default
+          jdbc.password: Aa123456
+          batchSize: 3000
+          scheduleTime: 600   # second unit
+          threads: 3          # parallel threads

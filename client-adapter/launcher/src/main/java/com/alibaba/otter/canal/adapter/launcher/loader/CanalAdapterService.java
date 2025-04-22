@@ -47,20 +47,32 @@ public class CanalAdapterService {
 
     private volatile boolean    running = false;
 
+    /**
+     * 在Bean初始化完成后执行的初始化方法
+     * 该方法确保在应用程序启动时，只初始化一次
+     * 同步方法，防止多线程环境下多次初始化
+     */
     @PostConstruct
     public synchronized void init() {
+        // 如果已经初始化并正在运行，则直接返回
         if (running) {
             return;
         }
         try {
+            // 刷新同步开关，确保配置是最新的
             syncSwitch.refresh();
             logger.info("## syncSwitch refreshed.");
+
+            // 初始化并启动Canal客户端适配器
             logger.info("## start the canal client adapters.");
             adapterLoader = new CanalAdapterLoader(adapterCanalConfig);
             adapterLoader.init();
+
+            // 设置运行状态为true，表示适配器正在运行
             running = true;
             logger.info("## the canal client adapters are running now ......");
         } catch (Exception e) {
+            // 捕获异常并记录，确保适配器的启动过程中出现的异常不会导致程序崩溃
             logger.error("## something goes wrong when starting up the canal client adapters:", e);
         }
     }

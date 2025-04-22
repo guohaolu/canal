@@ -36,29 +36,56 @@ public class ApplicationConfigMonitor {
 
     private FileAlterationMonitor fileMonitor;
 
+    /**
+     * 初始化方法，用于设置配置文件目录的监听器
+     * 该方法在类实例化后调用，主要用于启动对配置目录的监控
+     */
     @PostConstruct
     public void init() {
+        // 获取配置文件目录路径
         File confDir = Util.getConfDirPath();
         try {
+            // 创建一个文件 alteration 观察器，只监控符合特定条件的文件
+            // 这里监控的是以 "application" 开头且以 "yml" 结尾的文件
             FileAlterationObserver observer = new FileAlterationObserver(confDir,
                 FileFilterUtils.and(FileFilterUtils.fileFileFilter(),
                     FileFilterUtils.prefixFileFilter("application"),
                     FileFilterUtils.suffixFileFilter("yml")));
+
+            // 创建文件监听器实例
             FileListener listener = new FileListener();
+
+            // 将监听器添加到观察者中，以便接收文件变动事件
             observer.addListener(listener);
+
+            // 创建文件监控器，每3000毫秒检查一次文件变动
             fileMonitor = new FileAlterationMonitor(3000, observer);
+
+            // 启动文件监控器
             fileMonitor.start();
 
         } catch (Exception e) {
+            // 日志记录任何启动监控过程中发生的异常
             logger.error(e.getMessage(), e);
         }
     }
 
+    /**
+     * 在Bean销毁前执行清理工作
+     * <p>
+     * 该方法主要用于释放资源或停止某些在应用运行期间持续运行的过程
+     * 这里专注于停止文件监控器，确保在Bean销毁时，文件监控器能够被正确关闭
+     * 防止资源泄露
+     * <p>
+     * 注：此方法标记了@PreDestroy注解，表明这是一个在Bean生命周期结束前会被调用的方法
+     */
     @PreDestroy
     public void destroy() {
         try {
+            // 尝试停止文件监控器
             fileMonitor.stop();
         } catch (Exception e) {
+            // 如果在停止文件监控器过程中发生异常，记录错误信息
             logger.error(e.getMessage(), e);
         }
     }

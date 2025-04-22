@@ -48,6 +48,11 @@ public class CommonRest {
     @Resource
     private AdapterCanalConfig            adapterCanalConfig;
 
+    /**
+     * 初始化方法，用于初始化loader
+     * 该方法在类的构造方法之后执行，主要用于加载外部适配器的扩展
+     * 使用@PostConstruct注解表明这个方法在所有依赖注入完成后执行，确保了依赖项的完整性
+     */
     @PostConstruct
     public void init() {
         loader = ExtensionLoader.getExtensionLoader(OuterAdapter.class);

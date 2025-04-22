@@ -64,21 +64,37 @@ public class SyncSwitch {
         }
     }
 
+    /**
+     * 刷新配置信息
+     * 此方法用于同步更新配置信息，确保在分布式或多线程环境下安全地更新和监听配置变化
+     */
     public synchronized void refresh() {
+        // 遍历所有目的地配置
         for (String destination : adapterCanalConfig.DESTINATIONS) {
             BooleanMutex booleanMutex;
+            // 根据模式选择不同的锁策略
             if (mode == Mode.DISTRIBUTED) {
+                // 在分布式模式下，获取Curator客户端实例
                 CuratorFramework curator = curatorClient.getCurator();
+                // 尝试从分布式锁映射中获取当前目的地的锁对象
                 booleanMutex = DISTRIBUTED_LOCK.get(destination);
+                // 如果当前目的地的锁对象不存在，说明尚未初始化，进行初始化操作
                 if (booleanMutex == null) {
+                    // 创建一个新的布尔互斥锁，并设置为可用状态
                     BooleanMutex mutex = new BooleanMutex(true);
+                    // 初始化分布式锁
                     initMutex(curator, destination, mutex);
+                    // 将新创建的锁对象添加到分布式锁映射中
                     DISTRIBUTED_LOCK.put(destination, mutex);
+                    // 开始监听当前目的地的配置变化，并传入锁对象以协调监听过程
                     startListen(destination, mutex);
                 }
             } else {
+                // 在非分布式模式下，直接从本地锁映射中获取当前目的地的锁对象
                 booleanMutex = LOCAL_LOCK.get(destination);
+                // 如果当前目的地的锁对象不存在，说明尚未初始化，进行初始化操作
                 if (booleanMutex == null) {
+                    // 创建一个新的布尔互斥锁并添加到本地锁映射中
                     LOCAL_LOCK.put(destination, new BooleanMutex(true));
                 }
             }

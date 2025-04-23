@@ -12,7 +12,7 @@ canal.conf:
   zookeeperHosts:
   syncBatchSize: 1000
   retries: -1
-  timeout:
+  timeout: 1000
   accessKey:
   secretKey:
   consumerProperties:
@@ -40,7 +40,7 @@ canal.conf:
     rocketmq.access.channel:
     rocketmq.subscribe.filter:
     # rabbitMQ consumer
-    rabbitmq.host: 172.18.11.215
+    rabbitmq.host: 172.18.11.232
     rabbitmq.virtual.host: /
     rabbitmq.username: canal
     rabbitmq.password: canal
@@ -65,5 +65,5 @@ canal.conf:
           jdbc.username: default
           jdbc.password: Aa123456
           batchSize: 3000
-          scheduleTime: 600   # second unit
+          scheduleTime: 5   # second unit
           threads: 3          # parallel threads

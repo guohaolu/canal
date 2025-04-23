@@ -91,6 +91,10 @@ public class SingleDml {
                     data = toCaseInsensitiveMap(data);
                 }
                 singleDml.setData(data);
+                // 新增版本号和逻辑删除标记
+                singleDml.getData().put("_version", dml.getTs());
+                Integer delFlag = "DELETE".equalsIgnoreCase(dml.getType()) ? 1 : 0;
+                singleDml.getData().put("_is_deleted", delFlag);
                 // 处理旧数据，如果存在
                 if (dml.getOld() != null) {
                     Map<String, Object> oldData = dml.getOld().get(i);

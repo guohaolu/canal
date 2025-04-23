@@ -214,11 +214,8 @@ public class ClickHouseBatchSyncService {
                 // 如果类型为空，则直接返回
                 if (type == null) return;
 
-                // Changed！增加修改 Clickhouse 逻辑，update，delete => insert
-                changeType(dml);
-
                 // 根据DML类型进行不同的处理
-                if ("INSERT".equalsIgnoreCase(type)) {
+                if ("INSERT".equalsIgnoreCase(type) || "UPDATE".equalsIgnoreCase(type) || "DELETE".equalsIgnoreCase(type)) {
                     // 如果是插入操作，调用appendDmlBufferPartition方法处理
                     appendDmlBufferPartition(config, dml);
                 } else {
@@ -254,32 +251,40 @@ public class ClickHouseBatchSyncService {
         }
     }
 
-    private void changeType(Dml dml) {
-//        if ("UPDATE".equalsIgnoreCase(dml.getType())) {
-//            dml.setType("UPDATE");
-//        }
-//        if ("UPDATE".equalsIgnoreCase(dml.getType())) {
-//            dml.setType("INSERT");
-//        }
-    }
-
+    /**
+     * 将DML语句添加到缓冲区 partitions 中
+     * 根据数据库映射和DML语句生成哈希值，以确定数据应存储在哪个缓冲区 partition 中
+     * 当缓冲区中的数据量达到预设阈值时，将数据同步到ClickHouse
+     *
+     * @param config 映射配置，包含数据库映射信息和并发配置
+     * @param dml 待处理的DML语句
+     */
     public void appendDmlBufferPartition(MappingConfig config, Dml dml) {
+        // 获取数据库映射的大小写敏感配置
         boolean caseInsensitive = config.getDbMapping().isCaseInsensitive();
+        // 将DML语句拆分为单个DML语句列表，以便于后续处理
         List<SingleDml> singleDmls = SingleDml.dml2SingleDmls(dml, caseInsensitive);
 
-        singleDmls.forEach(singleDml -> {
+        // 遍历每个单个DML语句
+        for (SingleDml singleDml : singleDmls) {
+            // 计算哈希值以确定缓冲区 partition
             int hash = mappingHash(config.getDbMapping());
+            // 如果配置为非并发模式，则将哈希值设为0，以确保所有数据进入同一个缓冲区
             if (!config.getConcurrent()) {
                 hash = 0;
             }
+            // 获取或创建缓冲区中的DML语句列表
             List<SingleDml> dmls = bufferPools[hash].computeIfAbsent(config, k -> new ArrayList<>());
+            // 同步块，以确保线程安全
             synchronized (dmls) {
+                // 将单个DML语句添加到缓冲区中
                 dmls.add(singleDml);
+                // 记录日志，包含添加的数据的ID
                 logger.info("Append one data into pool, id {}", singleDml.getData().get("id"));
             }
             // Check the size of the List, achieve when it reaches the maximum value
             if (dmls.size() >= batchSize) syncToClickHouse(config, hash);
-        });
+        }
     }
 
     /**
@@ -338,6 +343,10 @@ public class ClickHouseBatchSyncService {
         String backtick = SyncUtil.getBacktickByDbType(dataSource.getDbType());
         // 获取列名映射
         Map<String, String> columnsMap = SyncUtil.getColumnsMap(dbMapping, clearDmls.get(0).getData());
+
+        // 新增版本号和逻辑删除
+        columnsMap.put("_version", "_version");
+        columnsMap.put("_is_deleted", "_is_deleted");
 
         // 构建插入SQL语句的StringBuilder对象
         StringBuilder insertSql = new StringBuilder();

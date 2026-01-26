@@ -1,0 +1,21 @@
+stages:
+  - build
+
+cache:
+  paths:
+    - /home/gitlab-runner/.m2/repository/
+
+build_adapter:
+  stage: build
+  before_script:
+    - chmod +x ./mvnw  # 赋予执行权限（Linux/macOS）
+    - echo $CI_PROJECT_DIR
+  script:
+    - echo "Building canal-adapter submodule..."
+    - ./mvnw -f pom.xml clean install -DskipTests  # 指定子模块构建
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/client-adapter/launcher/target/canal-adapter/*  # 保存生成的构件
+    expire_in: 4 week  # 产物保留时间
+  only:
+    - master  # 仅 master 分支触发

@@ -267,6 +267,14 @@ public class ClickHouseBatchSyncService {
                 batchExecutors[index].commit();
                 return true;
             } catch (Exception e) {
+                // 新增完整的异常日志记录（关键！）
+                logger.error("批次 [{}] 数据插入失败，执行回滚 | 错误信息: {} | 数据内容: {}",
+                        index,
+                        e.getMessage(),
+                        tempDmls,  // 或打印关键标识信息
+                        e  // 最终参数传异常对象会自动打印堆栈
+                );
+
                 batchExecutors[index].rollback();
                 throw new RuntimeException(e);
             }

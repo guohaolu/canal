@@ -9,7 +9,7 @@ dbMapping:
   targetTable: ewayt_bi.ods_sale_msku_monitor_t_2
   targetPk:
     id: id
-  mapAll: true
+  mapAll: false
   targetColumns:
     id: id
     platform_id: platform_id

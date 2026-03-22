@@ -6,6 +6,8 @@
 [![percentage of issues still open](http://isitmaintained.com/badge/open/alibaba/canal.svg)](http://isitmaintained.com/project/alibaba/canal "percentage of issues still open")
 [![Leaderboard](https://img.shields.io/badge/Canal-%E6%9F%A5%E7%9C%8B%E8%B4%A1%E7%8C%AE%E6%8E%92%E8%A1%8C%E6%A6%9C-orange)](https://opensource.alibaba.com/contribution_leaderboard/details?projectValue=canal)
 
+## 二次开发内容
+- 开发ewayt-clickhouse模块，为clickhouse下游数据库提供数据同步支持，由40TPS提高到4000TPS。
 
 ## 简介
 

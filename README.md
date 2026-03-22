@@ -8,6 +8,7 @@
 
 ## 二次开发内容
 - 开发ewayt-clickhouse模块，为clickhouse下游数据库提供数据同步支持，由40TPS提高到4000TPS。
+- 通过ReplacingMergeTree保证下游数据的幂等，唯一性。
 
 ## 简介
 
